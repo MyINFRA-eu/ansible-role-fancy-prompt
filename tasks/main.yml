@@ -23,3 +23,108 @@
       - "Copyright : (c) 2025 (and beyond) - Dennis de Houx, All In One, One For The code"
       - "Author    : Dennis de Houx <dennis@dehoux.be>"
       - "License   : https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en CC BY-NC-ND 4.0"
+
+- name: "FANCY PROMPT > Create fancy prompt directory"
+  ansible.builtin.file:
+    path: /opt/fancy-prompt/
+    owner: root
+    group: root
+    state: directory
+    mode: "0755"
+  become: true
+  register: fancy_prompt_directory
+  when:
+    - fancy_prompt.install is defined and fancy_prompt.install is true
+
+- name: "FANCY PROMPT > Install fancy prompt"
+  ansible.builtin.copy:
+    src: files/fancy-prompt.sh
+    dest: /opt/fancy-prompt/fancy-prompt.sh
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  register: fancy_prompt_install
+  when:
+    - fancy_prompt.install is defined and fancy_prompt.install is true
+  tags:
+    - fancy_prompt_install
+
+- name: "FANCY PROMPT > Install fancy aliases"
+  ansible.builtin.copy:
+    src: files/fancy-aliases.sh
+    dest: /opt/fancy-prompt/fancy-aliases.sh
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  register: fancy_prompt_aliases
+  when:
+    - fancy_prompt.install is defined and fancy_prompt.install is true
+  tags:
+    - fancy_prompt_aliases
+
+- name: "FANCY PROMPT > Install custom profile for root"
+  ansible.builtin.copy:
+    src: files/custom_profile
+    dest: /root/.custom_profile
+    owner: "root"
+    group: "root"
+    mode: "0600"
+  become: true
+  when:
+    - fancy_prompt.install is defined and fancy_prompt.install is true
+  tags:
+    - fancy_prompt_custom_profile
+
+- name: "FANCY PROMPT > Make sure custom profile is include in root profile"
+  ansible.builtin.lineinfile:
+    path: /root/.profile
+    search_string: "custom_profile"
+    line: ". /root/.custom_profile"
+  become: true
+  when:
+    - fancy_prompt.install is defined and fancy_prompt.install is true
+  tags:
+    - fancy_prompt_custom_profile
+
+- name: "FANCY PROMPT > Make sure custom profile is include in root bashrc"
+  ansible.builtin.lineinfile:
+    path: /root/.bashrc
+    search_string: "custom_profile"
+    line: ". /root/.custom_profile"
+  become: true
+  when:
+    - fancy_prompt.install is defined and fancy_prompt.install is true
+  tags:
+    - fancy_prompt_custom_profile
+
+- name: "FANCY PROMPT > Install custom profile for users"
+  ansible.builtin.copy:
+    src: files/custom_profile
+    dest: "/home/{{ item.name }}/.custom_profile"
+    owner: "{{ item.name }}"
+    group: "{{ item.group | default(item.name if users_create_group else omit) }}"
+    mode: 0600
+  become: true
+  #become_user: "{{ item.name }}"
+  loop: "{{ users_list }}"
+  when:
+    - fancy_prompt.install is defined and fancy_prompt.install is true
+    - users_list is defined and users_list | length > 0
+  tags:
+    - fancy_prompt_custom_profile
+
+- name: "FANCY PROMPT > Make sure custom profile is include in user profile"
+  ansible.builtin.lineinfile:
+    path: "/home/{{ item.name }}/.profile"
+    search_string: "custom_profile"
+    line: ". ~/.custom_profile"
+  become: true
+  #become_user: "{{ item.name }}"
+  loop: "{{ users_list }}"
+  when:
+    - fancy_prompt.install is defined and fancy_prompt.install is true
+    - users_list is defined and users_list | length > 0
+  tags:
+    - fancy_prompt_custom_profile

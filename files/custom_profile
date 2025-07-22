@@ -1,0 +1,25 @@
+#####
+#
+# @name MyINFRA.eu ~ Custom Profile 1.0
+# @version 2025.07.001
+# @since 2025.07.001
+#
+# @copyright (c) 2025 (and beyond) - Dennis de Houx, All In One, One For The code
+# @author Dennis de Houx <dennis@dehoux.be>
+# @license https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en CC BY-NC-ND 4.0
+#
+#####
+
+### Load user settings
+. ~/.config/user.conf
+
+### Load fancy prompt if enabled in user settings
+if [[ "${FANCY_PROMPT}" == "on" ]]; then
+    source /opt/fancy-prompt/fancy-prompt.sh
+fi
+
+### Load fancy aliases if enabled in user settings
+if [[ "${ALIASES}" == "on" ]]; then
+    source /opt/fancy-prompt/fancy-aliases.sh
+fi
+

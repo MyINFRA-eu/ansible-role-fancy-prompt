@@ -59,17 +59,33 @@ We highly appreciate you mentioning us or our projects on you website, social me
 
 ## Requirements
 
-None.
+Used in conjunction with users role, standalone will only install the fancy-prompt & fancy-alias files and will not configure them for your users.
 
 
 ## Role Variables
 
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
+### install
+
+Install the fancy prompt.
+
+> value needs to be a boolean (true|false)
+
+
+### Full example
+
+```json
+{
+  "fancy_prompt": {
+    "install": true
+  }
+}
 ```
-var1: true
-var2: "string"
-var3: []
+
+```yml
+fancy_prompt:
+  install: true
 ```
 
 
